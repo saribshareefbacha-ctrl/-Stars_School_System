@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stars School Fee Management — Nankana Campus</title>
+<style>
+/* ========== RESET & BASE ========== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Segoe UI",Roboto,Arial,sans-serif;
+  background:radial-gradient(circle at center,#020617 20%,#0a0f25 100%);
+  color:#fff;
+  height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  position:relative;
+}
+h1,h2,h3{margin:0}
+
+/* ===== Floating Stars Animation ===== */
+.stars {
+  position:fixed;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  top:0;
+  left:0;
+  z-index:-1;
+}
+.star {
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:white;
+  border-radius:50%;
+  opacity:0.8;
+  animation:moveStar 10s linear infinite;
+}
+@keyframes moveStar {
+  from {transform:translateY(0) scale(1);opacity:1;}
+  to {transform:translateY(100vh) scale(0.5);opacity:0;}
+}
+
+/* ========== CARD CONTAINER ========== */
+.container {
+  background:rgba(0,0,20,0.75);
+  backdrop-filter:blur(8px);
+  border-radius:16px;
+  box-shadow:0 0 25px rgba(255,255,255,0.1);
+  width:95%;
+  max-width:640px;
+  padding:24px;
+  margin:auto;
+  overflow-y:auto;
+  max-height:90vh;
+}
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo .circle{
+  width:36px;height:36px;border-radius:50%;
+  background:#007bff;display:flex;align-items:center;justify-content:center;
+  font-weight:bold;font-size:16px;
+}
+header h1{
+  font-size:18px;
+  line-height:1.2;
+}
+header small{color:#aaa;font-size:12px;}
+
+/* Buttons */
+button,.btn{
+  background:#007bff;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  padding:6px 12px;
+  cursor:pointer;
+  transition:background 0.3s;
+}
+button:hover{background:#0056cc}
+button:disabled{opacity:0.5;cursor:not-allowed}
+
+/* Filters */
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:10px;
+}
+.filters select,.filters input{
+  background:#0b1225;
+  border:1px solid #1f2a44;
+  color:#fff;
+  padding:6px;
+  border-radius:6px;
+}
+
+/* Form */
+form{
+  display:grid;
+  gap:8px;
+  margin-top:10px;
+}
+input,select,textarea{
+  width:100%;
+  background:#0b1225;
+  border:1px solid #1f2a44;
+  color:#fff;
+  padding:8px;
+  border-radius:6px;
+}
+label{font-size:14px;margin-bottom:2px;display:block;color:#ddd}
+.record-list{margin-top:16px}
+.record{
+  background:rgba(255,255,255,0.05);
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  transition:transform 0.2s;
+}
+.record:hover{transform:scale(1.01);background:rgba(255,255,255,0.08)}
+.status-paid{color:#00ff88}
+.status-unpaid{color:#ff5577}
+.status-partial{color:#ffd85e}
+
+/* Scroll */
+.container::-webkit-scrollbar{width:6px}
+.container::-webkit-scrollbar-thumb{background:#444;border-radius:6px}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="circle">SS</div>
+      <div>
+        <h1>Stars School Fee Management</h1>
+        <small>Nankana Sahib Campus — Principal Imran Islam</small>
+      </div>
+    </div>
+    <div>
+      <button id="addBtn">+ Add record</button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <select id="filterStatus">
+      <option value="all">All</option>
+      <option value="Paid">Paid</option>
+      <option value="Not Paid">Not Paid</option>
+      <option value="Partially Paid">Partially Paid</option>
+    </select>
+
+    <select id="filterClass">
+      <option value="all">All Classes</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>9</option><option>10</option>
+    </select>
+
+    <input type="text" id="searchBox" placeholder="Search by name, roll, or status">
+  </div>
+
+  <form id="feeForm" style="display:none;">
+    <label>Student Name</label>
+    <input type="text" id="studentName" required>
+    <label>Father Name</label>
+    <input type="text" id="fatherName" required>
+    <label>Roll No.</label>
+    <input type="text" id="rollNo" required>
+    <label>Class</label>
+    <select id="studentClass" required>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>9</option><option>10</option>
+    </select>
+    <label>Fee Amount (Total)</label>
+    <input type="number" id="feeAmount" required>
+    <label>Status</label>
+    <select id="feeStatus" required>
+      <option>Paid</option>
+      <option>Not Paid</option>
+      <option>Partially Paid</option>
+    </select>
+    <label>Period of Payment (date.month/year)</label>
+    <input type="text" id="paymentPeriod" placeholder="e.g. 05.10/2025">
+    <label>If partial — amount paid</label>
+    <input type="number" id="partialPaid" value="0">
+    <label>Notes (optional)</label>
+    <textarea id="notes"></textarea>
+    <div style="display:flex;gap:10px;">
+      <button type="submit" class="btn">Save</button>
+      <button type="button" id="resetBtn">Reset</button>
+    </div>
+  </form>
+
+  <div class="record-list" id="recordList"></div>
+</div>
+
+<script>
+/* ====== Floating Stars JS ====== */
+const starContainer = document.getElementById('stars');
+for(let i=0;i<100;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=Math.random()*100+'%';
+  s.style.top=Math.random()*100+'%';
+  s.style.animationDelay=(Math.random()*10)+'s';
+  s.style.animationDuration=(8+Math.random()*8)+'s';
+  s.style.opacity=Math.random();
+  s.style.width=s.style.height=(Math.random()*3+1)+'px';
+  starContainer.appendChild(s);
+}
+
+/* ====== Fee Management Logic ====== */
+const form=document.getElementById('feeForm');
+const addBtn=document.getElementById('addBtn');
+const resetBtn=document.getElementById('resetBtn');
+const recordList=document.getElementById('recordList');
+const filterStatus=document.getElementById('filterStatus');
+const filterClass=document.getElementById('filterClass');
+const searchBox=document.getElementById('searchBox');
+
+let records=JSON.parse(localStorage.getItem('feeRecords')||'[]');
+let editIndex=null;
+
+function saveRecords(){localStorage.setItem('feeRecords',JSON.stringify(records));}
+
+function renderRecords(){
+  recordList.innerHTML='';
+  const status=filterStatus.value;
+  const cls=filterClass.value;
+  const search=searchBox.value.toLowerCase();
+  records.forEach((rec,i)=>{
+    if((status==='all'||rec.status===status)
+    &&(cls==='all'||rec.class===cls)
+    &&(rec.name.toLowerCase().includes(search)
+      ||rec.roll.toLowerCase().includes(search)
+      ||rec.status.toLowerCase().includes(search))){
+      const div=document.createElement('div');
+      div.className='record';
+      div.innerHTML=`
+        <strong>${rec.name}</strong> (Roll #${rec.roll}) — Class ${rec.class}<br>
+        Father: ${rec.father}<br>
+        Fee: ${rec.amount} — <span class="status-${rec.status.replace(' ','').toLowerCase()}">${rec.status}</span><br>
+        Period: ${rec.period||'—'}<br>
+        ${rec.status==='Partially Paid'?'Paid: '+rec.partial+' | Pending: '+(rec.amount-rec.partial):''}<br>
+        <small>${rec.notes||''}</small><br>
+        <button onclick="editRecord(${i})">Edit</button>
+        <button onclick="deleteRecord(${i})">Delete</button>
+      `;
+      recordList.appendChild(div);
+    }
+  });
+}
+
+function editRecord(i){
+  const r=records[i];
+  editIndex=i;
+  form.style.display='grid';
+  document.getElementById('studentName').value=r.name;
+  document.getElementById('fatherName').value=r.father;
+  document.getElementById('rollNo').value=r.roll;
+  document.getElementById('studentClass').value=r.class;
+  document.getElementById('feeAmount').value=r.amount;
+  document.getElementById('feeStatus').value=r.status;
+  document.getElementById('paymentPeriod').value=r.period;
+  document.getElementById('partialPaid').value=r.partial;
+  document.getElementById('notes').value=r.notes;
+}
+
+function deleteRecord(i){
+  if(confirm("Delete this record?")){
+    records.splice(i,1);
+    saveRecords();
+    renderRecords();
+  }
+}
+
+addBtn.onclick=()=>{form.reset();editIndex=null;form.style.display='grid';}
+resetBtn.onclick=()=>{form.reset();editIndex=null;form.style.display='none';}
+
+form.onsubmit=e=>{
+  e.preventDefault();
+  const r={
+    name:studentName.value.trim(),
+    father:fatherName.value.trim(),
+    roll:rollNo.value.trim(),
+    class:studentClass.value,
+    amount:+feeAmount.value,
+    status:feeStatus.value,
+    period:paymentPeriod.value.trim(),
+    partial:+partialPaid.value,
+    notes:notes.value.trim()
+  };
+  if(editIndex!==null){records[editIndex]=r;}else{records.push(r);}
+  saveRecords();renderRecords();form.reset();form.style.display='none';
+}
+
+filterStatus.onchange=filterClass.onchange=searchBox.oninput=renderRecords;
+
+renderRecords();
+</script>
+</body>
+</html>
