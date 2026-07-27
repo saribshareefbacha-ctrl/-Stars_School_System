@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Memory Matcher — a clean 4x4 card matching game built with vanilla HTML, CSS and JavaScript." />
+  <meta name="theme-color" content="#f4f6fb" />
+  <title>Memory Matcher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+
+    <!-- ===== Header ===== -->
+    <header class="header">
+      <h1 class="title">Memory Matcher</h1>
+      <p class="subtitle">Find all eight pairs in as few moves as possible.</p>
+    </header>
+
+    <!-- ===== Status bar: moves, timer, pairs ===== -->
+    <section class="stats" aria-label="Game statistics">
+      <div class="stat">
+        <span class="stat__label">Moves</span>
+        <span class="stat__value" id="moves" aria-live="polite">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label">Time</span>
+        <span class="stat__value" id="timer" aria-live="off">00:00</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label">Pairs</span>
+        <span class="stat__value"><span id="pairs">0</span> / 8</span>
+      </div>
+    </section>
+
+    <!-- ===== Controls ===== -->
+    <section class="controls">
+      <button class="btn btn--ghost" id="restart" type="button">Restart</button>
+      <button class="btn btn--primary" id="new-game" type="button">New Game</button>
+    </section>
+
+    <!-- ===== Board (cards injected by script.js) ===== -->
+    <section class="board-wrap">
+      <div class="board" id="board" role="grid" aria-label="Memory card board"></div>
+
+      <!-- Win overlay -->
+      <div class="overlay" id="overlay" hidden>
+        <div class="overlay__panel" role="dialog" aria-modal="true" aria-labelledby="win-title">
+          <h2 class="overlay__title" id="win-title">Well done!</h2>
+          <p class="overlay__text">
+            You matched all pairs in <strong id="final-moves">0</strong> moves
+            and <strong id="final-time">00:00</strong>.
+          </p>
+          <button class="btn btn--primary" id="play-again" type="button">Play Again</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Built with plain HTML, CSS &amp; JavaScript.</p>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
